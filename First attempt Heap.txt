@@ -1,0 +1,163 @@
+//Adam Elkhanoufi
+//Programing assignment 1
+//02/14/2022
+
+#include <iostream>
+#include <fstream>
+using namespace std;
+
+void sinkDown(int arr[], int root, int bottom, int k)
+{
+    int minChild, otherChild;
+    minChild = root * k + 1;
+
+    if (minChild > bottom)
+    {
+        return;
+    }
+    if (minChild < bottom)
+    {
+        otherChild = minChild + 1;
+        minChild = (arr[otherChild] < arr[minChild]) ? otherChild : minChild;
+    }
+    if (arr[root] <= arr[minChild])
+    {
+        return;
+        swap(arr[root], arr[minChild]);
+        sinkDown(arr, minChild, bottom, 3);
+    }
+}
+
+void heapify(int arr[], int arrSize)
+{
+    for (int i = arrSize / 2; i >= 0; i--)
+    {
+        sinkDown(arr, i, arrSize, 3);
+    }
+    //Code for heapify
+}
+
+void heapSort(int arr[], int arrSize)
+{
+    heapify(arr, arrSize);
+
+    for (int end = arrSize - 1; end > 0; end--)
+    {
+        swap(arr[end], arr[0]);
+        sinkDown(arr, 0, end - 1, 3);
+    }
+}
+
+void floatUp(int arr[], int element, int k)
+{
+    int root = (element - 1) / k;
+
+    while (root >= 0)
+    {
+        if (arr[element] > arr[root])
+        {
+            swap(arr[element], arr[root]);
+            element = root;
+            root = (element - 1) / k;
+        }
+        else
+        {
+            break;
+        }
+    }
+}
+
+void insert(int element, int heapSize, int arr[], int k)
+{
+    arr[heapSize - 1] = element;
+    heapSize++;
+    floatUp(arr, heapSize - 1, 3);
+}
+
+void decreaseKey(int index, int newElement, int arr[], int arrSize)
+{
+    while (index > newElement)
+    {
+        for (int i = 0; i < arrSize; i++)
+        {
+            arr[i] = arr[i + 1];
+        }
+
+        index--;
+    }
+
+    //Decrease the key
+}
+
+void extractMin(int arr[], int heapSize, int k)
+{
+    arr[0] = arr[heapSize - 1];
+    heapSize--;
+    sinkDown(arr, 0, heapSize - 1, 3);
+  
+    //If extractMin is the last instruction remove and print the root element
+    //Else remove root element from heap
+}
+
+void Heap(int arr[], int arrSize, int k)
+{
+    for (int i = (arrSize - 1) / k; i >= 0; i--)
+    {
+        sinkDown(arr, 0, arrSize - 1, 3);
+    }
+}
+
+void swap(int a, int b)
+{
+    int temp = a;
+    a = b;
+    b = temp;
+}
+
+int main()
+{
+      //Read input instructions
+      ifstream f("inputFile.txt");
+
+      int arr[1];
+      int arrSize = 0;  //Max array size
+      int heapSize = 0;   //Current heap size
+
+      Heap(arr, arrSize, 3);
+
+      int numOfInstructions;
+
+      f >> numOfInstructions;
+
+      string instruction;
+
+      int val, decreasedVal;
+
+      for (int lineNum = 0; lineNum <= numOfInstructions; lineNum++)
+      {
+          f >> instruction >> val >> decreasedVal;
+
+          if (instruction == "IN")
+          {
+              insert(val, heapSize, arr, 3);
+          }
+
+          if (instruction == "DK")
+          {
+              decreaseKey(val, decreasedVal, arr, arrSize);
+          }
+
+          if (instruction == "EM")
+          {
+              if (!(f.eof()))
+              {
+                  extractMin(arr, heapSize, 3);
+              }
+              else
+              {
+                  extractMin(arr, heapSize, 3);
+                  return arr[0];
+              }
+          }
+      }
+}
